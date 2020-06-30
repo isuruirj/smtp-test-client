@@ -33,15 +33,6 @@ public class App {
         properties.setProperty("mail.smtp.auth", configs.getProperty("mail.smtp.auth"));
         properties.setProperty("mail.smtp.starttls.enable", configs.getProperty("mail.smtp.starttls.enable"));
 
-        if (configs.getProperty("mail.smtp.timeout") != null) {
-            properties.setProperty("mail.smtp.timeout", configs.getProperty("mail.smtp.timeout"));
-            log.info("mail.smtp.timeout : " + properties.getProperty("mail.smtp.timeout"));
-        }
-        if (configs.getProperty("mail.smtp.connectiontimeout") != null) {
-            properties.setProperty("mail.smtp.connectiontimeout", configs.getProperty("mail.smtp.connectiontimeout"));
-            log.info("mail.smtp.connectiontimeout : " + properties.getProperty("mail.smtp.connectiontimeout"));
-        }
-
         Session session = Session.getDefaultInstance(properties,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -56,9 +47,12 @@ public class App {
             message.setText("Hello, this is a sample mail.");
 
             Transport.send(message);
-            long endTime = System.currentTimeMillis();
-            log.info("Message sent successfully. Time taken : " + (endTime - startTime) + "ms");
-        } catch (Exception e) {
+            log.info("Message sent successfully");
+        } catch (SendFailedException se) {
+            log.error("SendFailedException... ", se);
+        } catch (MessagingException me){
+            log.error("MessagingException...",me);
+        } catch (Exception e){
             log.error("Error... ", e);
         }
     }
